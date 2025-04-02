@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PenLine, Filter } from 'lucide-react';
-import { getPosts, getCurrentUser } from '@/lib/appwrite';
+import { getPosts, getCurrentUser } from '@/lib/supabase';
 import Header from '@/components/Header';
 import BlogCard from '@/components/BlogCard';
 

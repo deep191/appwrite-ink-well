@@ -1,11 +1,10 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createAccount, login } from '@/lib/appwrite';
+import { createAccount, login } from '@/lib/supabase';
 import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
@@ -47,20 +46,18 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
     setIsLoading(true);
     
     try {
-      const session = await login(loginEmail, loginPassword);
+      const data = await login(loginEmail, loginPassword);
       toast({
         title: "Login successful",
         duration: 3000,
       });
-      onSuccess(session);
+      onSuccess(data.user);
     } catch (error: any) {
       console.error('Login error:', error);
       
       let errorMessage = "Please check your credentials";
       
-      if (error.message === "Network request failed") {
-        errorMessage = "Connection to Appwrite failed. Please make sure your Appwrite project ID is correct.";
-      } else if (error.message) {
+      if (error.message) {
         errorMessage = error.message;
       }
       
@@ -102,20 +99,18 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
     setIsLoading(true);
     
     try {
-      const session = await createAccount(registerEmail, registerPassword, registerName);
+      const data = await createAccount(registerEmail, registerPassword, registerName);
       toast({
         title: "Account created successfully",
         duration: 3000,
       });
-      onSuccess(session);
+      onSuccess(data.user);
     } catch (error: any) {
       console.error('Registration error:', error);
       
       let errorMessage = "Please try again";
       
-      if (error.message === "Network request failed") {
-        errorMessage = "Connection to Appwrite failed. Please make sure your Appwrite project ID is correct.";
-      } else if (error.message) {
+      if (error.message) {
         errorMessage = error.message;
       }
       

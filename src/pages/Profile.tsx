@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PenLine, User } from 'lucide-react';
-import { getCurrentUser, getUserProfile, getPosts } from '@/lib/appwrite';
+import { getCurrentUser, getUserProfile, getPosts } from '@/lib/supabase';
 import Header from '@/components/Header';
 import BlogCard from '@/components/BlogCard';
 import { useToast } from '@/components/ui/use-toast';
@@ -40,17 +40,17 @@ const Profile = () => {
         setUser(currentUser);
         
         // Get user profile
-        const userProfile = await getUserProfile(currentUser.$id);
+        const userProfile = await getUserProfile(currentUser.id);
         setProfile(userProfile);
         
         // Set form values
-        setName(userProfile?.name || currentUser.name);
+        setName(userProfile?.name || currentUser.user_metadata?.name || '');
         setBio(userProfile?.bio || '');
         
         // Get user's posts
         const posts = await getPosts();
         const filteredPosts = posts.filter(
-          (post: any) => post.authorId === currentUser.$id
+          (post: any) => post.author_id === currentUser.id
         );
         setUserPosts(filteredPosts);
       } catch (error) {

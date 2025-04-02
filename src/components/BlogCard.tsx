@@ -3,16 +3,15 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Calendar } from 'lucide-react';
-import { getFilePreview } from '@/lib/appwrite';
 
 interface BlogCardProps {
   post: {
-    $id: string;
+    id: string;
     title: string;
     content: string;
-    imageId?: string;
-    authorName: string;
-    $createdAt: string;
+    image_url?: string;
+    author_name: string;
+    created_at: string;
   };
 }
 
@@ -46,11 +45,11 @@ const BlogCard = ({ post }: BlogCardProps) => {
 
   return (
     <Card className="overflow-hidden h-full flex flex-col hover:shadow-md transition-shadow animate-fade-in">
-      <Link to={`/post/${post.$id}`} className="flex-1 flex flex-col">
-        {post.imageId && (
+      <Link to={`/post/${post.id}`} className="flex-1 flex flex-col">
+        {post.image_url && (
           <div className="relative h-48 w-full overflow-hidden">
             <img
-              src={getFilePreview(post.imageId).toString()}
+              src={post.image_url}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             />
@@ -66,13 +65,13 @@ const BlogCard = ({ post }: BlogCardProps) => {
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center space-x-2">
               <Avatar className="h-8 w-8 bg-primary text-white">
-                <AvatarFallback>{getAuthorInitials(post.authorName)}</AvatarFallback>
+                <AvatarFallback>{getAuthorInitials(post.author_name)}</AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium">{post.authorName}</span>
+              <span className="text-sm font-medium">{post.author_name}</span>
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <Calendar className="h-3 w-3 mr-1" />
-              <span>{formatDate(post.$createdAt)}</span>
+              <span>{formatDate(post.created_at)}</span>
             </div>
           </div>
         </CardFooter>

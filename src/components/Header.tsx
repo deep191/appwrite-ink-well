@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { PenLine, User, LogIn } from 'lucide-react';
-import { getCurrentUser, logout } from '@/lib/appwrite';
+import { getCurrentUser, logout } from '@/lib/supabase';
 import AuthModal from './AuthModal';
 import { useToast } from '@/components/ui/use-toast';
 
