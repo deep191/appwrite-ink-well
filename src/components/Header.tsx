@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { PenLine, User, LogIn } from 'lucide-react';
+import { PenLine, User, LogIn, PlusCircle } from 'lucide-react';
 import { getCurrentUser, logout } from '@/lib/supabase';
 import AuthModal from './AuthModal';
 import { useToast } from '@/components/ui/use-toast';
@@ -73,6 +73,12 @@ const Header = () => {
             <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
           ) : user ? (
             <div className="flex items-center space-x-4">
+              <Link to="/create">
+                <Button variant="outline" size="sm" className="hidden md:flex items-center">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Create Post
+                </Button>
+              </Link>
               <Link to="/profile">
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <User className="h-5 w-5" />

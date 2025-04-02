@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Index from "./pages/Index";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
+import Create from "./pages/Create";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/post/:id" element={<Post />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/create" element={<Create />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </TooltipProvider>
