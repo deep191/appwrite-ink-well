@@ -15,13 +15,32 @@ import AppwriteSetup from "./components/AppwriteSetup";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isConfigured, setIsConfigured] = useState(true);
+  const [isConfigured, setIsConfigured] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Check if Appwrite project ID is configured
     const projectId = localStorage.getItem('VITE_APPWRITE_PROJECT_ID') || APPWRITE_PROJECT;
-    setIsConfigured(projectId !== 'your-project-id');
+    
+    // We consider it configured if it's not the default placeholder
+    const configured = projectId !== 'your-project-id';
+    setIsConfigured(configured);
+    setIsLoading(false);
+    
+    if (configured) {
+      console.log("Appwrite project configured with ID:", projectId);
+    } else {
+      console.log("Appwrite project not configured, showing setup screen");
+    }
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>

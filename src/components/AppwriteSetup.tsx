@@ -5,14 +5,27 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { InfoIcon, CheckCircle } from 'lucide-react';
+import { InfoIcon, CheckCircle, AlertTriangle } from 'lucide-react';
 
 const AppwriteSetup = () => {
   const [projectId, setProjectId] = useState('');
   const [configured, setConfigured] = useState(false);
+  const [error, setError] = useState('');
   
   const handleSave = () => {
-    if (!projectId) return;
+    if (!projectId) {
+      setError('Please enter a Project ID');
+      return;
+    }
+    
+    // Validate the project ID format (basic check)
+    if (projectId.length < 10) {
+      setError('This doesn\'t look like a valid Appwrite Project ID. Please check again.');
+      return;
+    }
+    
+    // Clear any existing errors
+    setError('');
     
     // In a real application, you would save this to localStorage or similar
     localStorage.setItem('VITE_APPWRITE_PROJECT_ID', projectId);
@@ -42,13 +55,39 @@ const AppwriteSetup = () => {
                 <li>Create an Appwrite account at <a href="https://appwrite.io" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">appwrite.io</a></li>
                 <li>Create a new project in Appwrite Console</li>
                 <li>Create a database named <code className="bg-muted px-1 rounded">blog-database</code></li>
-                <li>Create two collections: <code className="bg-muted px-1 rounded">posts</code> and <code className="bg-muted px-1 rounded">users</code></li>
+                <li>Create two collections with the following IDs: <code className="bg-muted px-1 rounded">posts</code> and <code className="bg-muted px-1 rounded">users</code></li>
+                <li>Add the following attributes to the <code className="bg-muted px-1 rounded">posts</code> collection:
+                  <ul className="list-disc pl-6 mt-1 space-y-1 text-xs">
+                    <li><code>title</code> (string, required)</li>
+                    <li><code>content</code> (string, required)</li>
+                    <li><code>authorId</code> (string, required)</li>
+                    <li><code>authorName</code> (string, required)</li>
+                    <li><code>imageId</code> (string, optional)</li>
+                    <li><code>published</code> (boolean, required)</li>
+                  </ul>
+                </li>
+                <li>Add the following attributes to the <code className="bg-muted px-1 rounded">users</code> collection:
+                  <ul className="list-disc pl-6 mt-1 space-y-1 text-xs">
+                    <li><code>userId</code> (string, required)</li>
+                    <li><code>name</code> (string, required)</li>
+                    <li><code>email</code> (string, required)</li>
+                    <li><code>bio</code> (string, optional)</li>
+                  </ul>
+                </li>
                 <li>Create a storage bucket named <code className="bg-muted px-1 rounded">blog-images</code></li>
-                <li>Copy your project ID from the Appwrite console</li>
+                <li>Set appropriate permissions for each collection and bucket</li>
+                <li>Copy your project ID from the Appwrite console (Settings > Project)</li>
                 <li>Enter it below to connect this app to your Appwrite project</li>
               </ol>
             </AlertDescription>
           </Alert>
+          
+          {error && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
           
           <div className="space-y-2">
             <Label htmlFor="project-id">Appwrite Project ID</Label>

@@ -2,7 +2,7 @@
 import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
 
 export const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
-export const APPWRITE_PROJECT = import.meta.env.VITE_APPWRITE_PROJECT_ID || 'your-project-id';
+export const APPWRITE_PROJECT = import.meta.env.VITE_APPWRITE_PROJECT_ID || localStorage.getItem('VITE_APPWRITE_PROJECT_ID') || 'your-project-id';
 export const APPWRITE_DATABASE_ID = 'blog-database';
 export const APPWRITE_COLLECTION_POSTS = 'posts';
 export const APPWRITE_COLLECTION_USERS = 'users';
@@ -17,6 +17,19 @@ export const client = new Client()
 export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
+
+// Helper function to handle and log errors
+const handleError = (error: any, context: string) => {
+  console.error(`Appwrite ${context} error:`, error);
+  
+  // Add more detailed logging for network errors
+  if (error.message === "Network request failed") {
+    console.error("Network request to Appwrite failed. Please check your internet connection and Appwrite project ID.");
+    console.error("Current Appwrite project ID:", APPWRITE_PROJECT);
+  }
+  
+  throw error;
+};
 
 // Authentication helpers
 export const createAccount = async (email: string, password: string, name: string) => {
@@ -40,7 +53,7 @@ export const createAccount = async (email: string, password: string, name: strin
     
     return await login(email, password);
   } catch (error) {
-    throw error;
+    return handleError(error, 'createAccount');
   }
 };
 
@@ -48,7 +61,7 @@ export const login = async (email: string, password: string) => {
   try {
     return await account.createEmailSession(email, password);
   } catch (error) {
-    throw error;
+    return handleError(error, 'login');
   }
 };
 
@@ -56,7 +69,7 @@ export const logout = async () => {
   try {
     return await account.deleteSessions();
   } catch (error) {
-    throw error;
+    return handleError(error, 'logout');
   }
 };
 
@@ -64,6 +77,8 @@ export const getCurrentUser = async () => {
   try {
     return await account.get();
   } catch (error) {
+    // Don't throw error for getCurrentUser as it's normal to not be logged in
+    console.log('Not currently logged in');
     return null;
   }
 };
@@ -78,7 +93,7 @@ export const getUserProfile = async (userId: string) => {
     
     return users.documents[0];
   } catch (error) {
-    throw error;
+    return handleError(error, 'getUserProfile');
   }
 };
 
@@ -93,7 +108,7 @@ export const getPosts = async (limit = 10) => {
     
     return posts.documents;
   } catch (error) {
-    throw error;
+    return handleError(error, 'getPosts');
   }
 };
 
@@ -105,7 +120,7 @@ export const getPost = async (postId: string) => {
       postId
     );
   } catch (error) {
-    throw error;
+    return handleError(error, 'getPost');
   }
 };
 
@@ -131,7 +146,7 @@ export const createPost = async (
       }
     );
   } catch (error) {
-    throw error;
+    return handleError(error, 'createPost');
   }
 };
 
@@ -152,7 +167,7 @@ export const updatePost = async (
       data
     );
   } catch (error) {
-    throw error;
+    return handleError(error, 'updatePost');
   }
 };
 
@@ -164,7 +179,7 @@ export const deletePost = async (postId: string) => {
       postId
     );
   } catch (error) {
-    throw error;
+    return handleError(error, 'deletePost');
   }
 };
 
@@ -177,7 +192,7 @@ export const uploadImage = async (file: File) => {
       file
     );
   } catch (error) {
-    throw error;
+    return handleError(error, 'uploadImage');
   }
 };
 

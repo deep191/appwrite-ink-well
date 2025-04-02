@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createAccount, login } from '@/lib/appwrite';
 import { useToast } from '@/components/ui/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -17,6 +19,7 @@ interface AuthModalProps {
 const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>('login');
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   
   // Login form state
@@ -30,6 +33,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
     if (!loginEmail || !loginPassword) {
       toast({
@@ -51,9 +55,20 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
       onSuccess(session);
     } catch (error: any) {
       console.error('Login error:', error);
+      
+      let errorMessage = "Please check your credentials";
+      
+      if (error.message === "Network request failed") {
+        errorMessage = "Connection to Appwrite failed. Please make sure your Appwrite project ID is correct.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
+      
       toast({
         title: "Login failed",
-        description: error.message || "Please check your credentials",
+        description: errorMessage,
         variant: "destructive",
         duration: 3000,
       });
@@ -64,6 +79,7 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
   
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
     if (!registerName || !registerEmail || !registerPassword) {
       toast({
@@ -94,9 +110,20 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
       onSuccess(session);
     } catch (error: any) {
       console.error('Registration error:', error);
+      
+      let errorMessage = "Please try again";
+      
+      if (error.message === "Network request failed") {
+        errorMessage = "Connection to Appwrite failed. Please make sure your Appwrite project ID is correct.";
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setError(errorMessage);
+      
       toast({
         title: "Registration failed",
-        description: error.message || "Please try again",
+        description: errorMessage,
         variant: "destructive",
         duration: 3000,
       });
@@ -113,6 +140,13 @@ const AuthModal = ({ isOpen, onClose, onSuccess }: AuthModalProps) => {
             {activeTab === 'login' ? 'Welcome Back' : 'Join InkWell'}
           </DialogTitle>
         </DialogHeader>
+        
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         
         <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
