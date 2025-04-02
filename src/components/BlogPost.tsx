@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { getPost, getFilePreview, getCurrentUser } from '@/lib/appwrite';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/components/ui/use-toast';
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,7 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
   
   useEffect(() => {
     const fetchPost = async () => {
@@ -27,13 +29,18 @@ const BlogPost = () => {
         setCurrentUser(user);
       } catch (error) {
         console.error('Error fetching post:', error);
+        toast({
+          title: "Error loading post",
+          description: "Could not load the post. Please try again later.",
+          variant: "destructive"
+        });
       } finally {
         setLoading(false);
       }
     };
     
     fetchPost();
-  }, [id]);
+  }, [id, toast]);
   
   // Format the date
   const formatDate = (dateString: string) => {

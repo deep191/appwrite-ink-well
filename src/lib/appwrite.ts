@@ -2,7 +2,7 @@
 import { Client, Account, Databases, Storage, ID, Query } from 'appwrite';
 
 export const APPWRITE_ENDPOINT = 'https://cloud.appwrite.io/v1';
-export const APPWRITE_PROJECT = 'your-project-id'; // Will be replaced by user
+export const APPWRITE_PROJECT = import.meta.env.VITE_APPWRITE_PROJECT_ID || 'your-project-id';
 export const APPWRITE_DATABASE_ID = 'blog-database';
 export const APPWRITE_COLLECTION_POSTS = 'posts';
 export const APPWRITE_COLLECTION_USERS = 'users';
